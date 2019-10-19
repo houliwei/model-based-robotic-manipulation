@@ -1,0 +1,97 @@
+'********************************************************************
+'* User name
+'* TCP/IP communication program
+'* Date: 2017/4/28
+'*    Copyright(c) 2017 NACHI-Fujikoshi corp.
+'********************************************************************
+'* Integer variables definition
+'*   V9% : Send data size [byte]
+'*   V10% : Receive data size [byte]
+'*   V108% : Socket error code E1
+'*   V109% : Socket error code E2
+'*-------------------------------------------------------------------
+'* Real variables definition
+'*   V1$ : Error message
+'*   V2$ : Socket status
+'*   V3$ : Downlink message
+'*   V4$ : Uplink message
+'*-------------------------------------------------------------------
+'* Socket buffer
+'*   Buffer 1 : Send buffer
+'*   Buffer 2 : Receive buffer
+'********************************************************************
+'***** Initialize *****
+*INITIAL
+'String variables	(V1$-V13$)
+FOR L100%=1 TO 10 STEP 1
+	V$[L100%]=""
+NEXT
+'Integer variables	(V1%-V10%)
+FOR L100%=1 TO 10 STEP 1
+	V%[L100%]=0
+NEXT
+'Real variables	(V1!-V10!)
+FOR L100%=1 TO 10 STEP 1
+	V![L100%]=0
+NEXT
+'***** Create socket *****
+*CREATE
+V1$=""
+V2$="CREATE SOCKET"
+SOCKCREATE 1,0			'Socket#1 & TCP/IP
+IF E1%>=0 THEN *CONNECT
+'Socket create error
+V1$="Socket create error"
+GOTO *RESET
+'***** Socket Connect *****
+*CONNECT
+V1$=""
+V2$="CONNECT"
+SOCKCONNECT 1,133,3000,5
+V2$="GET Date"
+IF E1%>=0 THEN *DOWNLINK
+V1$="Connect fail"
+V108%=E1%
+V109%=E2%
+GOTO *RESET
+
+'***** Trigger *****
+*Trigger
+V2$="Trigger"
+V4$="Photo"
+WHILE V50%=0
+PAUSE 10
+ENDW
+SOCKSENDSTR 1,V4$,LEN(V4$),3,V9%
+
+'***** Receive downlink message *****
+*DOWNLINK
+V108% = 0		'Clear socket error E1
+V109% = 0		'Clear socket error E2
+V2$="DOWNLINK PROCESS"
+SOCKRECV 1,2,0,0,V10%		
+IF E1%<0 THEN *DLINK_ERROR
+GETSTR 2,V3$,0,V10%
+V11!=VAL(V3$)
+R1=(0,0,0,V11!,0,0)
+PAUSE 20
+V50%=0
+
+'***** Downlink end *****
+*DLINK_END
+GOTO *Trigger
+'***** Downlink error *****
+*DLINK_ERROR
+V1$="Downlink error"
+GOTO *ERROR
+
+'***** Reset *****
+*RESET
+SOCKCLOSE 1
+GOTO *INITIAL
+
+'***** Program end *****
+*ERROR
+V108%=E1%
+V109%=E2%
+GOTO *INITIAL

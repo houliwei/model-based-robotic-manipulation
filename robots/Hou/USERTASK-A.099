@@ -1,0 +1,63 @@
+
+'----------------------------------------------------------
+'SocketTCP.Model
+'NACHI--ALL FOR SPEED
+'TCP/IP Socket(Clint)
+'----------------------------------------------------------
+*Init
+	FOR L1%=1 TO 20 STEP 1
+		V$[L1%]=""
+		V%[L1%]=0
+		V![L1%]=0
+           	NEXT
+*Create
+	V1$="SOCKCREATE"
+	SOCKCREATE 1,0
+	IF E1%<0 THEN *ERROR
+*SOCKCONNECT
+	V1$="SOCKCONNECT"
+	SOCKCONNECT 1,2,6666,3     'clint
+*Clear
+        SOCKRECV 1,1,0,5,V101%    'clear
+		GETSTR 1,V3$,V101%
+		IF V3$ = "Welcome" Then *SEND 
+		PAUSE 500
+		GOTO Clear
+      
+*SEND
+	V10$="WaitForCommand"+CHR$(13)+CHR$(10)	
+	SOCKSENDSTR 1,V10$,LEN(V10$),1,V100% 
+	     
+*SERVO
+	PAUSE 500
+		SOCKRECV 1,1,0,5,V101%
+		 
+'		 SOCKRECV 1,1,0,1,V1%    '2nd
+ '       V10$=""+CHR$(13)+CHR$(10)
+  '      SOCKSENDSTR 1,V10$,LEN(V10$),5,V100%
+   '           SOCKRECV 1,1,0,1,V1%    '3rd
+              GETSTR 1,V21$,0,V1%
+    '    V20%=E1%
+     '   V19%=E2%
+	'IF E1%<0 THEN *ERROR
+        
+
+*RECV1
+     '   V1$="RECV"
+
+      '  V10$="GVA019"+CHR$(13)+CHR$(10)         ' GV****
+       ' SOCKSENDSTR 1,V10$,LEN(V10$),1,V100%	 
+        '    SOCKRECV 1,1,0,1,V1%      
+       ' V20%=E1%
+	'IF E1%<=0 THEN *ERROR
+     '   GETSTR 1,V7$,0,V1%         'I       
+      '  GETSTR 1,V8$,3,1         'R          
+
+
+*ERROR
+V2$="ERROR"
+SOCKCLOSE 1
+PAUSE 1000
+GOTO *Create
+
+

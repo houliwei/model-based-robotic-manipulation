@@ -1,0 +1,59 @@
+' Server
+*START
+	FOR L1% = 1 TO 20 STEP 1	'初始化1-20#变量
+		V$[L1%] = ""
+		V![L1%] = 0
+		V%[L1%] = 0
+	NEXT
+*CREATE	
+	V1$ = "sockcreat"
+		SOCKCREATE 1,0
+	IF E1%<0 Then *RESET
+*SOCKBIND	                   '开放已创建套字节端口号
+	V1$ = "sockbind"
+		SOCKBIND 1,2000
+	IF E1%<0 Then *RESET
+*SOCKWAIT	                   '等待客户端连接
+	V1$ = "sockwait"
+		SOCKWAIT 1,2,0
+	IF E1%<0 Then *RESET
+*connected
+	V1$ = "Connect_OK"
+*examine
+    SOCKRECV 2,1,1,5,V100%
+    GETBYTE 1,V20%,0             'v20% usertask to usertask
+    IF V20%<>49 THEN *examine
+	
+
+	
+*ValveOpen
+	V1$ = "OPENING"
+    IF V19%=0 THEN *ValveOpen    'v19% robot to usertask
+	    V19$="PICK"             
+		SOCKSENDSTR 2,V19$,LEN(V19$),1,V100%	
+		
+*ValveClose
+	V1$ = "CLOSING"
+    IF V19%=1 THEN *ValveClose        'v19% robot to usertask
+	    V19$="PUT"          
+		SOCKSENDSTR 2,V19$,LEN(V19$),1,V100%		
+	IF V16%=0 THEN *ValveOpen ELSE *closesock
+    
+*closesock
+    SOCKCLOSE 1
+    SOCKCLOSE 2
+    EXIT
+
+SOCKSENDSTR 2,V4$,LEN(V4$),0,V2%,3
+*RESET
+    V1$ = "套字节复位"	'套字节复位
+SOCKCLOSE 1
+SOCKCLOSE 2
+GOTO *START	'重启套字节建立
+EXIT
+
+
+
+
+
+

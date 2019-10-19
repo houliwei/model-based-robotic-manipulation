@@ -1,0 +1,51 @@
+
+'----------------------------------------------------------
+'SocketTCP.Model
+'NACHI--ALL FOR SPEED
+'TCP/IP Socket(Clint)
+'----------------------------------------------------------
+*Init
+	FOR L1%=1 TO 20 STEP 1
+		V$[L1%]=""
+		V%[L1%]=0
+		V![L1%]=0
+           	NEXT
+*Create
+	V2$="SOCKCREATE"
+	SOCKCREATE 1,0
+	IF E1%<0 THEN *ERROR
+
+*SOCKCONNECT
+	V2$="SOCKCONNECT"
+	SOCKCONNECT 1,4,23,3     'clint
+	IF E1%<0 THEN *ERROR
+*Trigger
+        V55%=0
+     	V2$="SHOT"
+	
+*Trigger2
+	V2$="SHOT2"
+	IF V55%=0
+	PAUSE 50
+	GOTO *Trigger2
+	ENDIF
+      
+	V3$="admin"+CHR$(13)+CHR$(10)	
+        V4$=""+CHR$(13)+CHR$(10)
+	SOCKSENDSTR 1,V3$,LEN(V3$),5,V3%	
+        SOCKSENDSTR 1,V4$,LEN(V4$),5,V4%
+        V51%=E1%
+        V52%=E2%
+	IF E1%<0 THEN *ERROR
+	V5$="SE8"+CHR$(13)+CHR$(10)	
+        SOCKSENDSTR 1,V5$,LEN(V5$),5,V5%	
+     	V2$="FINISH"
+     	GOTO *Trigger
+
+*ERROR
+V2$="ERROR"
+SOCKCLOSE 1
+PAUSE 1000
+GOTO *Create
+
+

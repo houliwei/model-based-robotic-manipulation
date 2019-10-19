@@ -1,0 +1,54 @@
+'TCP/IP Socket(Clint)
+*Init
+	FOR L1%=1 TO 20 STEP 1
+		V$[L1%]=""
+		V%[L1%]=0
+		V![L1%]=0
+           	NEXT
+*Create
+	V1$="SOCKCREATE"
+	SOCKCREATE 1,0
+	IF E1%<0 THEN *ERROR
+*SOCKCONNECT
+	V1$="SOCKCONNECT"
+	SOCKCONNECT 1,4,23,3          'clint
+        SOCKRECV 1,1,0,1,V101%
+      	IF E1%<0 THEN *ERROR
+*Login
+	V10$="admin"+CHR$(13)+CHR$(10)	
+	SOCKSENDSTR 1,V10$,LEN(V10$),1,V100% 
+	    SOCKRECV 1,1,0,1,V1%    
+    V10$=""+CHR$(13)+CHR$(10)
+    SOCKSENDSTR 1,V10$,LEN(V10$),5,V100%
+        SOCKRECV 1,1,0,1,V1%    
+	IF E1%<0 THEN *ERROR   
+*RECV
+    V1$="RECV"
+    V10$="GVD024"+CHR$(13)+CHR$(10)         ' GV****
+    SOCKSENDSTR 1,V10$,LEN(V10$),1,V100%	 
+        SOCKRECV 1,1,0,1,V1%      
+	IF E1%<=0 THEN *ERROR
+*GETDATA
+        GETSTR 1,V7$,0,V1%       'I       
+        GETSTR 1,V16$,3,9         'R          
+		
+        V31$=MID$(V16$,1,1)
+        V32$=MID$(V16$,2,1)
+        V33$=MID$(V16$,3,1)
+        V34$=MID$(V16$,4,1)
+        V35$=MID$(V16$,5,1)
+        V36$=MID$(V16$,6,1)
+        V37$=MID$(V16$,7,1)
+        V38$=MID$(V16$,8,1)
+        V39$=MID$(V16$,9,1)
+        FOR L1%= 31 TO 39
+        V%[L1%]=VAL(V$[L1%])
+        NEXT
+        V10%=1
+        EXIT
+
+*ERROR
+V2$="ERROR"
+SOCKCLOSE 1
+PAUSE 1000
+GOTO *Create
