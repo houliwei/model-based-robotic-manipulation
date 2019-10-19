@@ -1,6 +1,8 @@
-First , you should have a hardware platform . [Here](https://github.com/houliwei/intelligent-robotic-manipulation/tree/master/robots) are the platforms I mainly use. 
+- First , you should have a hardware platform . [Here](https://github.com/houliwei/intelligent-robotic-manipulation/tree/master/robots) are the platforms I mainly use. 
 
-Secend , **compliance** is a necessary component for maniplulation , the implementation of compliace controller is [Here](https://github.com/houliwei/intelligent-robotic-manipulation/tree/master/Compliant-Control)
+- Secend , **compliance** is a necessary component for maniplulation , the implementation of compliace controller is [Here](https://github.com/houliwei/intelligent-robotic-manipulation/tree/master/Compliant-Control)
+
+***
 
 Next , we are going to explore the amazing world of manipulation. 
 
